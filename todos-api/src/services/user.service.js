@@ -1,5 +1,5 @@
 const dbPool = require('../config/database')
-const todos = [] // database sementara
+// const todos = [] // database sementara
 
 //create todos
 const createTodos =  async (body) => {
@@ -9,7 +9,7 @@ const createTodos =  async (body) => {
 
 //update todos
 const updateTodos = async (id, body) => {
-    const query = `SELECT title, description, deadline FROM todos WHERE id = ${id}`
+    const query = `UPDATE todos SET title = '${body.title}', description = '${body.description}', deadline = '${body.deadline}' WHERE id = ${id}`
     return dbPool.execute(query);
 }
 
@@ -30,3 +30,5 @@ const deleteTodos = async (id) => {
     const query = `DELETE FROM todos WHERE id = ${id}`
     return dbPool.execute(query);
 }
+
+module.exports = { createTodos, updateTodos, viewTodo, viewTodos, deleteTodos }
