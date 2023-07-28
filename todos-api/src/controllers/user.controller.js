@@ -1,14 +1,21 @@
-// const userService = require('../services/user.service');
+const userService = require('../services/user.service');
 
 const createTodos = async (req, res) => {
     const { body } = req
 
-    if ( !body.userId || !body.todo == "" ) {
+    if ( !body.userId || !body.title == "" || !body.description == "" || !body.deadline ) {
         return res.status(400).json({
             status: 'fail',
             message: 'todo tidak boleh kosong!'
         });
     }
+
+    const dataUser = user [0][0]
+
+    const jwtToken = jwt.sign(
+        {id: dataUser.id, userId: dataUser.userId},
+        process.env.JWT_SECRET
+    )
 
     try {
         const user = await userService.createTodos(body)
@@ -32,7 +39,7 @@ const updateTodos = async (req, res) => {
     const id = req.params.id;
     const { body } = req;
 
-    if ( !body.userId || !body.todo == "" ) {
+    if ( !body.title == "" || !body.description == "" || !body.deadline ) {
         return res.status(400).json({
             status: 'fail',
             message: 'todo tidak boleh kosong!'
