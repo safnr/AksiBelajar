@@ -31,4 +31,9 @@ const deleteTodos = async (id) => {
     return dbPool.execute(query);
 }
 
-module.exports = { createTodos, updateTodos, viewTodo, viewTodos, deleteTodos }
+const getUserByuserId = async (userId) => {
+    const query = `SELECT id, userId, title, description, deadline FROM todos WHERE userId = '${userId}'`
+    return dbPool.execute(query)
+}
+
+module.exports = { createTodos, updateTodos, viewTodo, viewTodos, deleteTodos, getUserByuserId }
