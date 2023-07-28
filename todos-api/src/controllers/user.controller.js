@@ -6,77 +6,44 @@ const createTodos = async (req, res) => {
 
     if (!body.userId || !body.title || !body.description || !body.deadline) {
         return res.status(400).json({
-            status: 'fail',
+            status: 'failed',
             message: 'todo anda tidak sesuai',
         });
     }
 
     try {
-        const user = await userService.getUserByuserId(body.userId);
+        const user = await userService.getUserByUserId(body.userId);
 
-        // const dataUser = user[0][0];
+        await userService.createTodos(body);
 
         const jwtToken = jwt.sign(
             { id: user.id, userId: user.userId },
             process.env.JWT_SECRET
         );
 
-        await userService.createTodos(body);
-
         return res.status(201).json({
             status: 'success',
             message: 'todo anda berhasil disimpan',
             token: jwtToken,
-            data: user,
+            data: body
         });
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            status: 'fail',
+            status: 'failed',
             message: 'todo anda gagal dibuat',
         });
     }
 };
 
-
-// const createTodos = async (req, res) => {
-//     const { body } = req
-
-//     try {
-//         const user = await userService.getUserByuserId(body.userId);
-
-//         const dataUser = user[0][0]
-
-//         const jwtToken = jwt.sign(
-//             {id: dataUser.id, userId: dataUser.userId},
-//             process.env.JWT_SECRET
-//         )
-
-//         await userService.createTodos(body);
-
-//         return res.status(201).json({
-//             status: 'success',
-//             message: 'data berhasil disimpan',
-//             token: jwtToken,
-//             data: dataUser
-//         });
-//     } catch (error) {
-//         console.log(error)
-//         return res.status(500).json({
-//             status: 'fail',
-//             message: 'todo anda gagal dibuat'
-//         });
-//     }
-// }
-
 const updateTodos = async (req, res) => {
     const id = req.params.id;
     const { body } = req;
 
-    if ( !body.title == "" || !body.description == "" || !body.deadline ) {
+    if ( !body.title || !body.description || !body.deadline ) {
         return res.status(400).json({
-            status: 'fail',
-            message: 'todo tidak boleh kosong!'
+            status: 'failed',
+            message: 'todo anda tidak sesuai!'
         });
     }
 
@@ -90,7 +57,7 @@ const updateTodos = async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(500).json({
-            status: 'fail',
+            status: 'failed',
             message: 'gagal memperbarui data'
         });
     }
@@ -100,16 +67,23 @@ const viewTodo = async (req, res) => {
     const id = req.params.id;
 
     try {
-        await userService.viewTodo(id);
+        const [user] = await userService.viewTodo(id);
+
+        const jwtToken = jwt.sign(
+            { id: user.id, userId: user.userId },
+            process.env.JWT_SECRET
+        );
 
         return res.status(200).json({
             status: 'success',
             message: 'berhasil menampilkan todo',
-            data: user
+            token: jwtToken,
+            data: user 
         });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
-            status: 'fail',
+            status: 'failed',
             message: 'gagal menampilkan todo'            
         });
     }
@@ -127,8 +101,9 @@ const viewTodos = async (req, res) => {
             data: user
         });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
-            status: 'fail',
+            status: 'failed',
             message: 'gagal menampilkan todos'            
         });
     }
@@ -145,8 +120,9 @@ const deleteTodos = async (req, res) => {
             message: 'berhasil menghapus todo'
         });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
-            status: 'fail',
+            status: 'failed',
             message: 'gagal menghapus todo'            
         });
     }
